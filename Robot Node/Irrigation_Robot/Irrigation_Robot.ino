@@ -22,6 +22,9 @@
 #define RW_RPWM 7
 #define RW_LPWM 6
 
+#define YELLOWLED 38
+#define REDLED 40
+
 void setup()
 {
   pinMode (FW_IN1, OUTPUT);
@@ -40,6 +43,9 @@ void setup()
 
   pinMode (relay1, OUTPUT);
   pinMode (relay2, OUTPUT);
+
+  pinMode (YELLOWLED, OUTPUT);
+  pinMode (REDLED, OUTPUT);
 
   analogWrite (FW_RPWM, 200);
   analogWrite (FW_LPWM, 200);
@@ -68,8 +74,9 @@ void loop()
   packetSize = LoRa.parsePacket();
   if (packetSize)
   {
-    //digitalWrite LOW RED LED
-    //digitalWrite HIGH YELLOW LED
+    digitalWrite (REDLED, LOW);
+    digitalWrite (YELLOWLED, HIGH);
+    
     while (LoRa.available())
     {
       packetHeader = LoRa.readStringUntil ('#');
@@ -91,11 +98,12 @@ void loop()
         Serial.println (ack);
       }
     }
-    //digitalWrite LOW YELLOW LED
+    
+    digitalWrite (YELLOWLED, HIGH);
   }
   else
   {
-    //digitalWrite HIGH RED LED
+    digitalWrite (REDLED, HIGH);
   }
 
   if (moist > 600) //&& tankLevel == 1)
