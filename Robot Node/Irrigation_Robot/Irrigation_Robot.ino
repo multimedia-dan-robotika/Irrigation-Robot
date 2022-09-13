@@ -22,15 +22,6 @@
 #define RW_RPWM 7
 #define RW_LPWM 6
 
-unsigned long previousMillis;
-const long interval = 2000;
-
-int moist, previousMoist;
-String ack;
-String packetHeader;
-String packetValue;
-int packetSize;
-
 void setup()
 {
   pinMode (FW_IN1, OUTPUT);
@@ -68,14 +59,21 @@ void setup()
 
 void loop()
 {
+  int moist, currentMoist;
+  String ack;
+  String packetHeader;
+  String packetValue;
+  int packetSize;
+  
   packetSize = LoRa.parsePacket();
   if (packetSize)
   {
+    //digitalWrite LOW RED LED
+    //digitalWrite HIGH YELLOW LED
     while (LoRa.available())
     {
       packetHeader = LoRa.readStringUntil ('#');
       packetValue = LoRa.readStringUntil ('#');
-      previousMillis = millis();
       if (packetHeader == "X")
       {
         moist = packetValue.toInt();
@@ -93,18 +91,11 @@ void loop()
         Serial.println (ack);
       }
     }
+    //digitalWrite LOW YELLOW LED
   }
-
-  if (millis() - previousMillis >= interval)
+  else
   {
-    if (moist != previousMoist)
-    {
-      previousMoist = moist;
-    }
-    else
-    {
-      move (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    }
+    //digitalWrite HIGH RED LED
   }
 
   if (moist > 600) //&& tankLevel == 1)
